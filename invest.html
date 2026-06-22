@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Invest Now — ApexSC Small Cap Fund</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue:      #1A3C6E;
+  --blue-mid:  #2B5BA8;
+  --blue-lt:   #EEF3FB;
+  --green:     #059669;
+  --green-lt:  #ECFDF5;
+  --red:       #DC2626;
+  --red-lt:    #FEF2F2;
+  --amber:     #D97706;
+  --amber-lt:  #FFFBEB;
+  --grey-100:  #F4F6F9;
+  --grey-200:  #E8ECF2;
+  --grey-400:  #9BAABB;
+  --grey-700:  #4A5568;
+  --white:     #FFFFFF;
+  --text:      #1E293B;
+  --border:    #DDE3ED;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--grey-100); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; }
+
+nav {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px; position: sticky; top: 0; z-index: 200;
+}
+.nav-logo { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--blue); text-decoration: none; }
+.nav-logo span { color: var(--blue-mid); }
+.nav-bread { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--grey-400); }
+.nav-bread a { color: var(--grey-400); text-decoration: none; }
+.nav-bread a:hover { color: var(--blue); }
+.nav-bread .sep { font-size: 11px; }
+.nav-bread .current { color: var(--text); font-weight: 600; }
+.nav-actions { display: flex; gap: 10px; }
+.btn { padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; font-family: 'DM Sans', sans-serif; text-decoration: none; display: inline-flex; align-items: center; }
+.btn-outline { background: var(--white); color: var(--blue); border: 1.5px solid var(--blue); }
+.btn-outline:hover { background: var(--blue-lt); }
+
+.hero-strip {
+  background: linear-gradient(135deg, var(--blue) 0%, #2B5BA8 100%);
+  padding: 36px 48px;
+  color: var(--white);
+}
+.fund-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+  padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; color: #93C5FD;
+}
+.page-title { font-family: 'DM Serif Display', serif; font-size: clamp(22px, 3vw, 34px); font-weight: 400; line-height: 1.2; margin-bottom: 6px; }
+.page-sub { font-size: 13px; color: rgba(255,255,255,0.65); max-width: 560px; }
+
+.main-wrap { max-width: 920px; margin: 0 auto; padding: 32px 48px 64px; display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+
+.form-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
+.form-section { margin-bottom: 28px; }
+.form-section:last-child { margin-bottom: 0; }
+.form-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--grey-400); margin-bottom: 14px; }
+
+.type-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.type-opt {
+  border: 1.5px solid var(--border); border-radius: 10px; padding: 16px;
+  cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.type-opt:hover { border-color: var(--blue-mid); }
+.type-opt.active { border-color: var(--blue); background: var(--blue-lt); }
+.type-opt-icon { font-size: 20px; margin-bottom: 6px; }
+.type-opt-label { font-weight: 700; font-size: 13px; color: var(--text); }
+.type-opt-sub { font-size: 11px; color: var(--grey-400); margin-top: 2px; }
+
+.amount-box { position: relative; }
+.amount-prefix {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  font-size: 20px; font-weight: 700; color: var(--grey-400);
+}
+input.amount-input {
+  width: 100%; padding: 16px 16px 16px 36px; font-size: 24px; font-weight: 700;
+  border: 1.5px solid var(--border); border-radius: 10px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.15s;
+}
+input.amount-input:focus { border-color: var(--blue); }
+.amount-chips { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.amount-chip {
+  padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--white); font-size: 12px; font-weight: 600; cursor: pointer;
+  color: var(--grey-700); transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+}
+.amount-chip:hover, .amount-chip.active { background: var(--blue); color: var(--white); border-color: var(--blue); }
+.amount-hint { font-size: 11px; color: var(--grey-400); margin-top: 8px; }
+
+.plan-row { display: flex; gap: 12px; }
+.plan-opt {
+  flex: 1; border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px;
+  cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 10px;
+}
+.plan-opt:hover { border-color: var(--blue-mid); }
+.plan-opt.active { border-color: var(--blue); background: var(--blue-lt); }
+.plan-radio { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--grey-400); flex-shrink: 0; position: relative; }
+.plan-opt.active .plan-radio { border-color: var(--blue); }
+.plan-opt.active .plan-radio::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--blue); }
+.plan-label { font-size: 13px; font-weight: 600; }
+.plan-sub { font-size: 11px; color: var(--grey-400); }
+
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.input-row:last-child { margin-bottom: 0; }
+.field-label { font-size: 12px; font-weight: 600; color: var(--grey-700); margin-bottom: 6px; display: block; }
+.field-input {
+  width: 100%; padding: 11px 14px; font-size: 13px; border: 1.5px solid var(--border);
+  border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.15s;
+}
+.field-input:focus { border-color: var(--blue); }
+.field-full { grid-column: 1 / -1; }
+
+.submit-btn {
+  width: 100%; background: var(--blue); color: var(--white); border: none;
+  padding: 15px; border-radius: 10px; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; margin-top: 8px;
+}
+.submit-btn:hover { background: var(--blue-mid); }
+.submit-note { text-align: center; font-size: 11px; color: var(--grey-400); margin-top: 10px; }
+
+.summary-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 22px; position: sticky; top: 80px; }
+.summary-title { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--blue); margin-bottom: 16px; }
+.summary-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--grey-100); font-size: 12px; }
+.summary-row:last-of-type { border-bottom: none; }
+.summary-row .lbl { color: var(--grey-400); }
+.summary-row .val { font-weight: 700; color: var(--text); text-align: right; }
+.summary-divider { height: 1px; background: var(--border); margin: 14px 0; }
+.summary-total { display: flex; justify-content: space-between; align-items: baseline; }
+.summary-total .lbl { font-size: 12px; color: var(--grey-700); font-weight: 600; }
+.summary-total .val { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--blue); }
+.summary-note {
+  margin-top: 16px; background: var(--amber-lt); border: 1px solid #FDE68A;
+  border-radius: 8px; padding: 10px 12px; font-size: 11px; color: #92400E; line-height: 1.5;
+}
+
+.success-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 48px 32px; text-align: center; }
+.success-icon {
+  width: 64px; height: 64px; border-radius: 50%; background: var(--green-lt); color: var(--green);
+  display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 18px;
+}
+.success-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--blue); margin-bottom: 8px; }
+.success-sub { font-size: 13px; color: var(--grey-700); max-width: 380px; margin: 0 auto 24px; line-height: 1.6; }
+.success-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+@media (max-width: 760px) {
+  .main-wrap { grid-template-columns: 1fr; padding: 20px 20px 48px; }
+  .summary-card { position: static; }
+  nav { padding: 0 20px; }
+  .hero-strip { padding: 28px 20px; }
+  .nav-bread { display: none; }
+  .input-row { grid-template-columns: 1fr; }
+  .type-toggle, .plan-row { grid-template-columns: 1fr; flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="smallcap-detail.html" class="nav-logo">Apex<span>Funds</span></a>
+  <div class="nav-bread">
+    <a href="smallcap-detail.html">Home</a><span class="sep">›</span>
+    <a href="smallcap-detail.html">Our Funds</a><span class="sep">›</span>
+    <span class="current">Invest</span>
+  </div>
+  <div class="nav-actions">
+    <a href="smallcap-detail.html" class="btn btn-outline">‹ Back to Fund</a>
+  </div>
+</nav>
+
+<div class="hero-strip">
+  <div class="fund-badge">Invest Now</div>
+  <div class="page-title">ApexSC Small Cap Fund</div>
+  <div class="page-sub">Complete the form below to start your investment. This is a demo form — no real payment will be processed.</div>
+</div>
+
+<div class="main-wrap" id="mainWrap">
+
+  <div class="form-card" id="formCard">
+
+    <div class="form-section">
+      <div class="form-section-title">Investment Type</div>
+      <div class="type-toggle">
+        <div class="type-opt active" id="typeSip" onclick="setType('sip')">
+          <div class="type-opt-icon">🔁</div>
+          <div class="type-opt-label">SIP</div>
+          <div class="type-opt-sub">Monthly · from ₹500</div>
+        </div>
+        <div class="type-opt" id="typeLump" onclick="setType('lump')">
+          <div class="type-opt-icon">💰</div>
+          <div class="type-opt-label">One-time</div>
+          <div class="type-opt-sub">Lump sum · from ₹5,000</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title" id="amountTitle">Monthly SIP Amount</div>
+      <div class="amount-box">
+        <span class="amount-prefix">₹</span>
+        <input type="number" class="amount-input" id="amountInput" value="5000" min="500" step="500" oninput="updateSummary()"/>
+      </div>
+      <div class="amount-chips" id="amountChips"></div>
+      <div class="amount-hint" id="amountHint">Minimum SIP amount is ₹500</div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Plan Type</div>
+      <div class="plan-row">
+        <div class="plan-opt active" id="planGrowth" onclick="setPlan('growth')">
+          <div class="plan-radio"></div>
+          <div>
+            <div class="plan-label">Growth</div>
+            <div class="plan-sub">Gains reinvested</div>
+          </div>
+        </div>
+        <div class="plan-opt" id="planIdcw" onclick="setPlan('idcw')">
+          <div class="plan-radio"></div>
+          <div>
+            <div class="plan-label">IDCW</div>
+            <div class="plan-sub">Regular payouts</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Investor Details</div>
+      <div class="input-row">
+        <div>
+          <label class="field-label">Full Name</label>
+          <input type="text" class="field-input" placeholder="As per PAN" id="fName"/>
+        </div>
+        <div>
+          <label class="field-label">PAN Number</label>
+          <input type="text" class="field-input" placeholder="ABCDE1234F" id="fPan"/>
+        </div>
+      </div>
+      <div class="input-row">
+        <div>
+          <label class="field-label">Email</label>
+          <input type="email" class="field-input" placeholder="you@example.com" id="fEmail"/>
+        </div>
+        <div>
+          <label class="field-label">Mobile Number</label>
+          <input type="tel" class="field-input" placeholder="+91 98765 43210" id="fPhone"/>
+        </div>
+        <div class="field-full">
+          <label class="field-label">Bank Account Number (for payment)</label>
+          <input type="text" class="field-input" placeholder="XXXXXXXXXXXX" id="fBank"/>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitInvestment()">Proceed to Payment</button>
+    <div class="submit-note">🔒 Demo form only · No real money will be deducted</div>
+  </div>
+
+  <div class="summary-card" id="summaryCard">
+    <div class="summary-title">Order Summary</div>
+    <div class="summary-row"><span class="lbl">Fund</span><span class="val">ApexSC Small Cap</span></div>
+    <div class="summary-row"><span class="lbl">Investment Type</span><span class="val" id="sumType">SIP (Monthly)</span></div>
+    <div class="summary-row"><span class="lbl">Plan</span><span class="val" id="sumPlan">Growth</span></div>
+    <div class="summary-row"><span class="lbl">Expense Ratio</span><span class="val">0.68%</span></div>
+    <div class="summary-divider"></div>
+    <div class="summary-total"><span class="lbl" id="sumTotalLbl">Monthly Amount</span><span class="val" id="sumTotalVal">₹5,000</span></div>
+    <div class="summary-note">⚠️ Mutual Fund investments are subject to market risks. This is a demo and does not involve real transactions.</div>
+  </div>
+
+</div>
+
+<script>
+let investType = 'sip';
+let planType = 'growth';
+
+const SIP_CHIPS = [500, 1000, 2500, 5000, 10000, 25000];
+const LUMP_CHIPS = [5000, 10000, 25000, 50000, 100000, 250000];
+
+function fmtINR(n) {
+  return '₹' + Number(n).toLocaleString('en-IN');
+}
+
+function renderChips() {
+  const chips = investType === 'sip' ? SIP_CHIPS : LUMP_CHIPS;
+  const container = document.getElementById('amountChips');
+  container.innerHTML = chips.map(c => `<button type="button" class="amount-chip" onclick="pickAmount(${c})">${fmtINR(c)}</button>`).join('');
+}
+
+function pickAmount(val) {
+  document.getElementById('amountInput').value = val;
+  updateSummary();
+}
+
+function setType(type) {
+  investType = type;
+  document.getElementById('typeSip').classList.toggle('active', type === 'sip');
+  document.getElementById('typeLump').classList.toggle('active', type === 'lump');
+
+  const amountInput = document.getElementById('amountInput');
+  if (type === 'sip') {
+    document.getElementById('amountTitle').textContent = 'Monthly SIP Amount';
+    document.getElementById('amountHint').textContent = 'Minimum SIP amount is ₹500';
+    amountInput.min = 500;
+    amountInput.step = 500;
+    amountInput.value = 5000;
+  } else {
+    document.getElementById('amountTitle').textContent = 'One-time Investment Amount';
+    document.getElementById('amountHint').textContent = 'Minimum lump sum amount is ₹5,000';
+    amountInput.min = 5000;
+    amountInput.step = 1000;
+    amountInput.value = 25000;
+  }
+  renderChips();
+  updateSummary();
+}
+
+function setPlan(plan) {
+  planType = plan;
+  document.getElementById('planGrowth').classList.toggle('active', plan === 'growth');
+  document.getElementById('planIdcw').classList.toggle('active', plan === 'idcw');
+  updateSummary();
+}
+
+function updateSummary() {
+  const amt = +document.getElementById('amountInput').value || 0;
+  document.getElementById('sumType').textContent = investType === 'sip' ? 'SIP (Monthly)' : 'One-time (Lump sum)';
+  document.getElementById('sumPlan').textContent = planType === 'growth' ? 'Growth' : 'IDCW';
+  document.getElementById('sumTotalLbl').textContent = investType === 'sip' ? 'Monthly Amount' : 'Total Amount';
+  document.getElementById('sumTotalVal').textContent = fmtINR(amt);
+}
+
+function submitInvestment() {
+  const name = document.getElementById('fName').value.trim();
+  const pan = document.getElementById('fPan').value.trim();
+  const email = document.getElementById('fEmail').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+  const amt = +document.getElementById('amountInput').value || 0;
+
+  if (!name || !pan || !email || !phone) {
+    alert('Please fill in all investor details before proceeding.');
+    return;
+  }
+  if (amt <= 0) {
+    alert('Please enter a valid investment amount.');
+    return;
+  }
+
+  const typeLabel = investType === 'sip' ? 'SIP (Monthly)' : 'One-time Investment';
+  const planLabel = planType === 'growth' ? 'Growth' : 'IDCW';
+
+  document.getElementById('mainWrap').innerHTML = `
+    <div class="success-card" style="grid-column:1/-1">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Investment Submitted</div>
+      <div class="success-sub">
+        Thank you, ${name}. Your ${typeLabel} of <strong>${fmtINR(amt)}</strong> in <strong>ApexSC Small Cap Fund (${planLabel})</strong> has been recorded.
+        This is a demo confirmation — no real payment was processed.
+      </div>
+      <div class="success-actions">
+        <a href="smallcap-detail.html" class="btn btn-outline">Back to Fund</a>
+        <a href="compare.html" class="btn btn-outline">Compare Funds</a>
+      </div>
+    </div>
+  `;
+}
+
+renderChips();
+updateSummary();
+</script>
+</body>
+</html>

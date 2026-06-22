@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Compare Funds — ApexFunds</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue:      #1A3C6E;
+  --blue-mid:  #2B5BA8;
+  --blue-lt:   #EEF3FB;
+  --green:     #059669;
+  --green-lt:  #ECFDF5;
+  --red:       #DC2626;
+  --red-lt:    #FEF2F2;
+  --amber:     #D97706;
+  --amber-lt:  #FFFBEB;
+  --grey-100:  #F4F6F9;
+  --grey-200:  #E8ECF2;
+  --grey-400:  #9BAABB;
+  --grey-700:  #4A5568;
+  --white:     #FFFFFF;
+  --text:      #1E293B;
+  --border:    #DDE3ED;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--grey-100); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; }
+
+/* ── NAV ── */
+nav {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px; position: sticky; top: 0; z-index: 200;
+}
+.nav-logo { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--blue); text-decoration: none; }
+.nav-logo span { color: var(--blue-mid); }
+.nav-bread { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--grey-400); }
+.nav-bread a { color: var(--grey-400); text-decoration: none; }
+.nav-bread a:hover { color: var(--blue); }
+.nav-bread .sep { font-size: 11px; }
+.nav-bread .current { color: var(--text); font-weight: 600; }
+.nav-actions { display: flex; gap: 10px; }
+.btn { padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; font-family: 'DM Sans', sans-serif; text-decoration: none; display: inline-flex; align-items: center; }
+.btn-primary { background: var(--blue); color: var(--white); }
+.btn-primary:hover { background: var(--blue-mid); }
+.btn-outline { background: var(--white); color: var(--blue); border: 1.5px solid var(--blue); }
+.btn-outline:hover { background: var(--blue-lt); }
+
+/* ── HERO STRIP ── */
+.hero-strip {
+  background: linear-gradient(135deg, var(--blue) 0%, #2B5BA8 100%);
+  padding: 36px 48px;
+  color: var(--white);
+}
+.fund-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+  padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; color: #93C5FD;
+}
+.page-title { font-family: 'DM Serif Display', serif; font-size: clamp(22px, 3vw, 34px); font-weight: 400; line-height: 1.2; margin-bottom: 6px; }
+.page-sub { font-size: 13px; color: rgba(255,255,255,0.65); max-width: 560px; }
+
+/* ── MAIN LAYOUT ── */
+.main-wrap { max-width: 1200px; margin: 0 auto; padding: 32px 48px 64px; }
+
+/* ── FUND PICKER ── */
+.picker-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; margin-bottom: 24px; }
+.picker-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+.picker-title { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--blue); }
+.picker-hint { font-size: 12px; color: var(--grey-400); }
+.fund-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.fund-opt {
+  border: 1.5px solid var(--border); border-radius: 10px; padding: 14px 16px;
+  cursor: pointer; transition: all 0.15s; position: relative; background: var(--white);
+}
+.fund-opt:hover { border-color: var(--blue-mid); }
+.fund-opt.selected { border-color: var(--blue); background: var(--blue-lt); }
+.fund-opt.disabled { opacity: 0.4; cursor: not-allowed; }
+.fund-opt-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+.fund-opt-name { font-weight: 700; font-size: 13px; color: var(--text); }
+.fund-opt-cat { font-size: 11px; color: var(--grey-400); margin-top: 2px; }
+.fund-opt-check {
+  width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--grey-400);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--white); background: var(--white);
+}
+.fund-opt.selected .fund-opt-check { background: var(--blue); border-color: var(--blue); }
+.fund-opt-ret { font-size: 12px; color: var(--green); font-weight: 700; margin-top: 8px; }
+
+/* ── COMPARE TABLE ── */
+.compare-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.compare-empty { padding: 60px 24px; text-align: center; color: var(--grey-400); }
+.compare-empty-icon { font-size: 36px; margin-bottom: 10px; }
+.compare-scroll { overflow-x: auto; }
+table.compare-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+.compare-table th, .compare-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--grey-100); white-space: nowrap; }
+.compare-table thead th { background: var(--grey-100); position: sticky; top: 60px; }
+.row-label-col {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--grey-400); width: 180px; position: sticky; left: 0; background: var(--white); z-index: 2;
+}
+.compare-table thead th.row-label-col { background: var(--grey-100); z-index: 3; }
+.fund-col-head { min-width: 200px; }
+.fch-name { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--blue); margin-bottom: 2px; }
+.fch-cat { font-size: 11px; color: var(--grey-400); font-weight: 500; text-transform: none; letter-spacing: 0; }
+.fch-remove {
+  display: inline-block; margin-top: 8px; font-size: 11px; color: var(--red);
+  cursor: pointer; font-weight: 600; background: none; border: none; padding: 0; font-family: 'DM Sans', sans-serif;
+}
+.compare-table tbody td { font-size: 13px; font-weight: 600; color: var(--text); }
+.cell-pos { color: var(--green); }
+.cell-neg { color: var(--red); }
+.risk-pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.risk-very-high { background: var(--red-lt); color: var(--red); }
+.risk-high { background: var(--amber-lt); color: var(--amber); }
+.risk-mod { background: var(--green-lt); color: var(--green); }
+.row-cta td { background: var(--grey-100); padding: 18px; }
+.cta-btn {
+  background: var(--blue); color: var(--white); border: none; padding: 9px 18px;
+  border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: background 0.15s; text-decoration: none; display: inline-block;
+}
+.cta-btn:hover { background: var(--blue-mid); }
+
+@media (max-width: 760px) {
+  .main-wrap { padding: 20px 20px 48px; }
+  nav { padding: 0 20px; }
+  .hero-strip { padding: 28px 20px; }
+  .nav-bread { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="smallcap-detail.html" class="nav-logo">Apex<span>Funds</span></a>
+  <div class="nav-bread">
+    <a href="smallcap-detail.html">Home</a><span class="sep">›</span>
+    <a href="smallcap-detail.html">Our Funds</a><span class="sep">›</span>
+    <span class="current">Compare</span>
+  </div>
+  <div class="nav-actions">
+    <a href="smallcap-detail.html" class="btn btn-outline">‹ Back to Fund</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero-strip">
+  <div class="fund-badge">Compare Tool</div>
+  <div class="page-title">Compare Funds</div>
+  <div class="page-sub">Select up to 3 funds to compare returns, expense ratios, risk and key metrics side by side.</div>
+</div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+
+  <!-- FUND PICKER -->
+  <div class="picker-card">
+    <div class="picker-head">
+      <div class="picker-title">Select Funds</div>
+      <div class="picker-hint" id="pickerHint">Select up to 3 funds</div>
+    </div>
+    <div class="fund-grid" id="fundGrid"></div>
+  </div>
+
+  <!-- COMPARE TABLE -->
+  <div class="compare-wrap" id="compareWrap"></div>
+
+</div>
+
+<script>
+// ── Fund dataset ──
+const FUNDS = [
+  {
+    id: 'apexsc',
+    name: 'ApexSC Small Cap Fund',
+    category: 'Small Cap',
+    nav: '₹187.42',
+    ret1y: '+34.2%',
+    ret3y: '+28.6%',
+    ret5y: '+24.1%',
+    expense: '0.68%',
+    aum: '₹8,240 Cr',
+    minSip: '₹500',
+    risk: 'Very High',
+    riskClass: 'risk-very-high',
+    rating: '★★★★☆',
+    launch: '14 Mar 2012'
+  },
+  {
+    id: 'apexmc',
+    name: 'ApexMC Mid Cap Fund',
+    category: 'Mid Cap',
+    nav: '₹142.18',
+    ret1y: '+26.4%',
+    ret3y: '+22.1%',
+    ret5y: '+19.8%',
+    expense: '0.74%',
+    aum: '₹11,560 Cr',
+    minSip: '₹500',
+    risk: 'Very High',
+    riskClass: 'risk-very-high',
+    rating: '★★★★☆',
+    launch: '02 Jul 2010'
+  },
+  {
+    id: 'apexlc',
+    name: 'ApexLC Large Cap Fund',
+    category: 'Large Cap',
+    nav: '₹96.75',
+    ret1y: '+15.8%',
+    ret3y: '+14.2%',
+    ret5y: '+13.1%',
+    expense: '0.52%',
+    aum: '₹19,830 Cr',
+    minSip: '₹500',
+    risk: 'Moderate',
+    riskClass: 'risk-mod',
+    rating: '★★★★★',
+    launch: '11 Jan 2006'
+  },
+  {
+    id: 'apexflex',
+    name: 'ApexFlex Flexicap Fund',
+    category: 'Flexi Cap',
+    nav: '₹78.90',
+    ret1y: '+21.3%',
+    ret3y: '+18.7%',
+    ret5y: '+17.2%',
+    expense: '0.61%',
+    aum: '₹14,920 Cr',
+    minSip: '₹500',
+    risk: 'High',
+    riskClass: 'risk-high',
+    rating: '★★★★☆',
+    launch: '23 Sep 2014'
+  },
+  {
+    id: 'apexhyb',
+    name: 'ApexHyb Hybrid Equity Fund',
+    category: 'Hybrid',
+    nav: '₹54.32',
+    ret1y: '+13.6%',
+    ret3y: '+12.4%',
+    ret5y: '+11.5%',
+    expense: '0.58%',
+    aum: '₹6,410 Cr',
+    minSip: '₹500',
+    risk: 'Moderate',
+    riskClass: 'risk-mod',
+    rating: '★★★★☆',
+    launch: '05 May 2016'
+  }
+];
+
+const ROWS = [
+  { label: 'NAV (₹)', key: 'nav' },
+  { label: '1Y Return', key: 'ret1y', colorize: true },
+  { label: '3Y Return (CAGR)', key: 'ret3y', colorize: true },
+  { label: '5Y Return (CAGR)', key: 'ret5y', colorize: true },
+  { label: 'Expense Ratio', key: 'expense' },
+  { label: 'AUM', key: 'aum' },
+  { label: 'Min. SIP', key: 'minSip' },
+  { label: 'Risk Level', key: 'risk', isRisk: true },
+  { label: 'Rating', key: 'rating' },
+  { label: 'Launch Date', key: 'launch' }
+];
+
+const MAX_SELECT = 3;
+let selected = ['apexsc']; // pre-select the current fund
+
+function toggleFund(id) {
+  if (selected.includes(id)) {
+    selected = selected.filter(s => s !== id);
+  } else {
+    if (selected.length >= MAX_SELECT) return;
+    selected.push(id);
+  }
+  render();
+}
+
+function renderPicker() {
+  const grid = document.getElementById('fundGrid');
+  grid.innerHTML = FUNDS.map(f => {
+    const isSel = selected.includes(f.id);
+    const isDisabled = !isSel && selected.length >= MAX_SELECT;
+    return `
+      <div class="fund-opt ${isSel ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" onclick="${isDisabled ? '' : `toggleFund('${f.id}')`}">
+        <div class="fund-opt-top">
+          <div>
+            <div class="fund-opt-name">${f.name}</div>
+            <div class="fund-opt-cat">${f.category}</div>
+          </div>
+          <div class="fund-opt-check">${isSel ? '✓' : ''}</div>
+        </div>
+        <div class="fund-opt-ret">${f.ret3y} · 3Y CAGR</div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('pickerHint').textContent =
+    selected.length >= MAX_SELECT ? 'Maximum 3 funds selected' : `Select up to ${MAX_SELECT} funds (${selected.length} selected)`;
+}
+
+function renderTable() {
+  const wrap = document.getElementById('compareWrap');
+  if (selected.length === 0) {
+    wrap.innerHTML = `
+      <div class="compare-empty">
+        <div class="compare-empty-icon">📊</div>
+        <div style="font-weight:600;color:var(--text);margin-bottom:4px">No funds selected</div>
+        <div style="font-size:12px">Choose at least one fund above to start comparing.</div>
+      </div>`;
+    return;
+  }
+
+  const chosen = FUNDS.filter(f => selected.includes(f.id));
+
+  let head = `<th class="row-label-col">Metric</th>` + chosen.map(f => `
+    <th class="fund-col-head">
+      <div class="fch-name">${f.name}</div>
+      <div class="fch-cat">${f.category}</div>
+      <button class="fch-remove" onclick="toggleFund('${f.id}')">✕ Remove</button>
+    </th>`).join('');
+
+  let body = ROWS.map(row => {
+    let cells = chosen.map(f => {
+      let val = f[row.key];
+      let cls = '';
+      if (row.isRisk) {
+        return `<td><span class="risk-pill ${f.riskClass}">${val}</span></td>`;
+      }
+      if (row.colorize) cls = val.startsWith('+') ? 'cell-pos' : (val.startsWith('-') || val.startsWith('–') ? 'cell-neg' : '');
+      return `<td class="${cls}">${val}</td>`;
+    }).join('');
+    return `<tr><td class="row-label-col">${row.label}</td>${cells}</tr>`;
+  }).join('');
+
+  let ctaRow = `<tr class="row-cta"><td class="row-label-col"></td>${
+    chosen.map(f => `<td><a href="smallcap-detail.html" class="cta-btn">View Fund</a></td>`).join('')
+  }</tr>`;
+
+  wrap.innerHTML = `
+    <div class="compare-scroll">
+      <table class="compare-table">
+        <thead><tr>${head}</tr></thead>
+        <tbody>${body}${ctaRow}</tbody>
+      </table>
+    </div>`;
+}
+
+function render() {
+  renderPicker();
+  renderTable();
+}
+
+render();
+</script>
+</body>
+</html>
